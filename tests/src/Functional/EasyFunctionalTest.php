@@ -65,23 +65,37 @@ class EasyFunctionalTest extends BrowserTestBase {
     $this->drupalPostForm('admin/config/system/site-information', $edit, t('Update Configuration'));
     $this->assertSession()->pageTextContains(t('Site API Key has been saved with ' . $this->siteApiKey . ' value.'), 'Site API key was saved');
 
-    // Create a node.
+    // Create a page node.
     $edit = [
       'title' => $this->randomMachineName(8),
-      'body' => $this->randomMachineName(16)
+      'body' => $this->randomMachineName(16),
+      'type' => 'page'
     ];
-    $node = $this->drupalCreateNode($edit);
+    $page = $this->drupalCreateNode($edit);
 
     // Get JSON for the node.
-    $path = 'page_json/' . $this->siteApiKey . '/' . $node->id();
+    $path = 'page_json/' . $this->siteApiKey . '/' . $page->id();
     $this->drupalGet($path);
     $this->assertSession()->statusCodeEquals(200);
 
     $response_node = json_decode($this->getSession()->getPage()->getContent());
-    $this->assertEquals($response_node->nid[0]->value, $node->id());
+    $this->assertEquals($response_node->nid[0]->value, $page->id());
 
     // Access denied for wrong API Key.
-    $path = 'page_json/DUMMY1234/' . $node->id();
+    $path = 'page_json/DUMMY1234/' . $page->id();
+    $this->drupalGet($path);
+    $this->assertSession()->statusCodeEquals(403);
+
+    // Create an article node.
+    $edit = [
+      'title' => $this->randomMachineName(8),
+      'body' => $this->randomMachineName(16),
+      'type' => 'article'
+    ];
+    $article = $this->drupalCreateNode($edit);
+
+    // Access denied for wrong content type.
+    $path = 'page_json/' . $this->siteApiKey . '/' . $article->id();
     $this->drupalGet($path);
     $this->assertSession()->statusCodeEquals(403);
   }
