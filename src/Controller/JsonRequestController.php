@@ -8,6 +8,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\node\NodeInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Class JsonRequestController.
@@ -42,6 +43,9 @@ class JsonRequestController extends ControllerBase implements ContainerInjection
    *   Return Hello string.
    */
   public function get_page($siteapikey, NodeInterface $node) {
+    if ($node->getType() != 'page') {
+      throw new AccessDeniedHttpException();
+    }
     return new JsonResponse($this->serializer->normalize($node));
   }
 
