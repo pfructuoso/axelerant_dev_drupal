@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Contains axelerant_dev_drupal.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function axelerant_dev_drupal_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the axelerant_dev_drupal module.
+    case 'help.page.axelerant_dev_drupal':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Axelerant Drupal Technical Skills Evaluation') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ * Adds Site API Key setting and changes submit button text.
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function axelerant_dev_drupal_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Site API Key field.
+  $form['site_information']['site_api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site API Key'),
+    '#default_value' => \Drupal::config('axelerant_dev_drupal.site')->get('siteapikey'),
+    '#description' => 'Field required for Axelerant Drupal developer test',
+  );
+
+  // Change submit button text.
+  $form['actions']['submit']['#value'] = new TranslatableMarkup('Update Configuration');
+
+  // Manage submit.
+  $form['actions']['submit']['#submit'][] = 'axelerant_dev_drupal_form_system_site_information_settings_submit_handler';
+}
+
+/**
+ * Handler for submiting form id system_site_information_settings.
+ * Saves Site API key.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_states
+ */
+function axelerant_dev_drupal_form_system_site_information_settings_submit_handler(&$form, FormStateInterface $form_states) {
+  // No validation requirements so just save.
+  \Drupal::configFactory()->getEditable('axelerant_dev_drupal.site')
+    ->set('siteapikey', $form_states->getValue('site_api_key'))
+    ->save();
+  drupal_set_message(t('Site API Key has been saved with %siteapikey value.', ['%siteapikey' => $form_states->getValue('site_api_key')]));
+}

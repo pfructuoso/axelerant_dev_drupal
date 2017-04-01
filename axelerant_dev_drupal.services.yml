@@ -1,0 +1,7 @@
+services:
+  api_key_slug:
+    class: Drupal\axelerant_dev_drupal\ApiKeySlug
+    arguments: ['@config.factory']
+    tags:
+      - { name: paramconverter }
+

@@ -1,0 +1,9 @@
+name: Axelerant dev Drupal
+type: module
+description: Axelerant Drupal Technical Skills Evaluation
+core: 8.x
+package: Axelerant
+dependencies:
+    - drupal:node
+    - drupal:system
+    - drupal:serialization

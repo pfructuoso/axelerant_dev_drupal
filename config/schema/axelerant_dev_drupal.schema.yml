@@ -1,0 +1,9 @@
+# Schema for the configuration files of the Axelerant dev Drupal module.
+
+axelerant_dev_drupal.site:
+  type: config_entity
+  label: 'Axelerant dev Drupal'
+  mapping:
+    siteapikey:
+      type: string
+      label: 'Site API Key'

@@ -1,0 +1,15 @@
+
+axelerant_dev_drupal.json_request_controller_get_page:
+  path: '/page_json/{siteapikey}/{node}'
+  defaults:
+    _controller: '\Drupal\axelerant_dev_drupal\Controller\JsonRequestController::get_page'
+    _title: 'Get page in JSON format'
+  requirements:
+    _permission: 'access content'
+  options:
+    parameters:
+      siteapikey:
+        type: api_key_slug
+      node:
+        type: entity:node
+  methods:  [GET]
